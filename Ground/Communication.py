@@ -6,13 +6,14 @@ import time
 # Import Blinka Libraries
 import busio
 from digitalio import DigitalInOut, Direction, Pull
-import board
+#import board # this is found only on raspberry pi
 # Import the SSD1306 module.
-import adafruit_ssd1306
+#import adafruit_ssd1306
 # Import RFM9x
 import adafruit_rfm9x
 
 def loraSetup():
+	global loraRadio
 	#Setup Lora
 	CS = DigitalInOut(board.CE1)
 	RESET = DigitalInOut(board.D25)
@@ -55,7 +56,6 @@ def main():
 
 
 # Runs the main function only if called from terminal
-if __name__ == __main__:
-	main();
-
-
+if __name__ == "__main__":
+	print("main method here")	
+	#main();
