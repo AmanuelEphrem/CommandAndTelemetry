@@ -6,7 +6,7 @@ import time
 # Import Blinka Libraries
 import busio
 from digitalio import DigitalInOut, Direction, Pull
-#import board # this is found only on raspberry pi
+import board # this is found only on raspberry pi
 # Import the SSD1306 module.
 #import adafruit_ssd1306
 # Import RFM9x
@@ -58,4 +58,4 @@ def main():
 # Runs the main function only if called from terminal
 if __name__ == "__main__":
 	print("main method here")	
-	#main();
+	main();
