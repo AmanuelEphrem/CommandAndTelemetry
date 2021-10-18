@@ -12,6 +12,8 @@ import board # this is found only on raspberry pi
 # Import RFM9x
 import adafruit_rfm9x
 
+
+
 def loraSetup():
 	global loraRadio
 	#Setup Lora
