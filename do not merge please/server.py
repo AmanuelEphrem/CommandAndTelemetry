@@ -3,7 +3,8 @@ import base64
 import zlib
 
 def decodeImage(yoshi):
-	ans = base64.b85decode(yoshi)
+	ans = yoshi
+	#ans = base64.b32decode(yoshi)
 	with open('newImg.png', "wb") as fh:
 		fh.write(zlib.decompress(ans))
 
@@ -20,8 +21,8 @@ def main():
 	while True:
 		c, addr = s.accept()
 		print("Got connection from ", addr)
-		poggers = c.recv(9000)
-		print(poggers.decode())
+		poggers = c.recv(214748364)
+		#print(poggers.decode())
 		decodeImage(poggers)
 		c.close()
 		if poggers != None:
