@@ -38,10 +38,13 @@ def receiveMessage():
 			prev_packet = packet
 			packet_text = str(prev_packet, "utf-8")
 			print(packet_text)
+			#test Radio strengeth
+			rssi = loraRadio.last_rssi
+			print("Signal strengeth: {0} dB".format(rssi))
 
 # Sends indicated message via lora chip
 def sendMessage(message):
-	sendingPacket = bytes(message)
+	sendingPacket = bytes(message,"utf-8")
 	loraRadio.send(sendingPacket)
 
 
@@ -51,9 +54,9 @@ def main():
 
 	# Main Communication loop
 	while True:
-		receiveMessage()
-		time.sleep(0.1)
 		sendMessage("Sending from ground to flight")
+		time.sleep(0.1)
+		receiveMessage()
 		time.sleep(0.1)
 
 
