@@ -12,8 +12,8 @@ def encode_image(imgname):
 # encimg expects a bytearray of the img that wants to be decoded
 # newimg expects a filename ***INCLUDING FILE EXTENSION, WHICH MATCHES ORIGINAL FILE TYPE OF ENCIMG*** to write into
 def decode_image(encimg, newimg):
-	with open(imgname, "wb") as fh:
-		fh.write(zlib.compress(encimg))
+	with open(newimg, "wb") as fh:
+		fh.write(zlib.decompress(encimg))
 
 # img_whole expects the bytearray representation of an image to be split into subarrays
 # returns an array of bytearrays which make up the input
