@@ -1,3 +1,5 @@
-# The code for the ground group
+# The code for the ground station
 
-1. Implement communication protocol (to send and receive from flight)
+- [x] Implement communication protocol (to send and receive from flight) (implemented for both flight and ground station in CommunicationProtocol.py)
+- [ ] Obtain data from any group that needs data sent to flight station 
+- [ ] Organize (using JSON format) and send obtained data using CommunicationProtocol.py 
