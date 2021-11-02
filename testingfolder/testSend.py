@@ -42,13 +42,14 @@ def receiveMessage():
 # Sends indicated message via lora chip
 def sendMessage(message, numSent):
 	sendingPacket = message
+	sendingPacket.to_bytes(100, 'big')
 	loraRadio.send(sendingPacket, identifier = numSent)
 
 def sendImage(img_name):
 	arr = encoder.encode_image(img_name)
 	arr = encoder.create_list(arr)
 	leng = len(arr)
-	sendMessage(leng.to_bytes(10, "big"), 255)
+	sendMessage(leng, 255)
 	for i in range(len(arr)):
 		send_message(arr[i], i)
 
