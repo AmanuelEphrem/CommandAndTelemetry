@@ -6,9 +6,9 @@ def create_server_connection(db_file):
 	connection = None
 	try:
 		connection = sqlite3.connect(db_file)
-		print("got emm")
+		#print("got emm")
 	except Error as err:
-		print("no good")
+		print("Data base unable to be created")
 
 	return connection
 
@@ -58,22 +58,37 @@ def deleteSensor(db_connection, index):
 	sensorSQL = """ DELETE FROM sensor WHERE elementIndex = ?"""
 	c = db_connection.cursor()
 	c.execute(sensorSQL,index)
-	c.commit()
+	db_connection.commit()
 
-def sensorPull(db_connection, index):
-	print("q")
+def pullall(db_connection):
+	pullSQL = """SELECT * FROM sensor"""
+	c = db_connection.cursor()
+	c.execute(pullSQL)
+
+	rows = c.fetchall()
+
+	for row in rows:
+		print(row)
+	#db_connection.commit()
 
 def main():
 	con = create_server_connection("flight.db")
-	senPusnum = 1
+	senPusnum = 0
 	if con is None:
 		return
 	setUp_DB(con)
-	sensordata = (senPusnum,1,"test","test","test", "test","test", "test","test","test", "test","test","test", "nameless.jpg:")
-	senPusnum +=1
-	sensorPush(con,sensordata)
+
+	for x in range(5):
+		sensordata = (senPusnum,1,"test","test","test", "test","test", "test","test","test", "test","test","test", "nameless.jpg:")
+		senPusnum +=1
+		sensorPush(con,sensordata)
+
+	pullall(con)
+
 	for i in range(senPusnum):
-		deleteSensor(con, i)
+		deleteSensor(con, str(i))
 	#print(con)
+
+
 
 main()
