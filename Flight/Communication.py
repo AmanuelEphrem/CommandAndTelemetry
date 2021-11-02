@@ -26,21 +26,20 @@ def loraSetup():
 
 # Reads received packets and prints them to stdout. If no packet is available "No Data Received is printed"
 def receiveMessage():
-	while True:
-		packet = None
-		# check for packet rx
-		packet = loraRadio.receive()
-		
-		if packet == None:
-			print("No Data Received")
-		
-		else:
-			prev_packet = packet
-			packet_text = str(prev_packet, "utf-8")
-			print(packet_text)
-			#test Radio strengeth
-			rssi = loraRadio.last_rssi
-			print("Signal strengeth: {0} dB".format(rssi))
+            packet = None
+            # check for packet rx
+            packet = loraRadio.receive()
+            
+            if packet == None:
+                    print("No Data Received")
+            
+            else:
+                    prev_packet = packet
+                    packet_text = str(prev_packet, "utf-8")
+                    print(packet_text)
+                    #test Radio strengeth
+                    rssi = loraRadio.last_rssi
+                    print("Signal strengeth: {0} dB".format(rssi))
 
 # Sends indicated message via lora chip
 def sendMessage(message):
@@ -54,7 +53,7 @@ def main():
 
 	# Main Communication loop
 	while True:
-		sendMessage("Sending from ground to flight")
+		sendMessage("based")
 		time.sleep(0.1)
 		receiveMessage()
 		time.sleep(0.1)
