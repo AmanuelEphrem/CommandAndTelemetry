@@ -2,6 +2,8 @@ import sqlite3
 from sqlite3 import Error
 import pandas as pd
 
+
+
 def create_server_connection(db_file):
 	connection = None
 	try:
@@ -67,12 +69,31 @@ def pullall(db_connection):
 
 	rows = c.fetchall()
 
+	#for row in rows:
+		#print(row)
+	#db_connection.commit()
+
+def pullInd(db_connection, index):
+	pullSQL = """SELECT * From sensor where elementIndex = ?"""
+	c = db_connection.cursor()
+	c.execute(pullSQL, str(index))
+
+	rows = c.fetchall()
+	print(rows)
+
+def pullTime(db_connection, second):
+	pullSQL = """SELECT * From sensor where second = ?"""
+	c = db_connection.cursor()
+	c.execute(pullSQL, str(second))
+
+	rows = c.fetchall()
+
 	for row in rows:
 		print(row)
-	#db_connection.commit()
 
 def main():
 	con = create_server_connection("flight.db")
+	global senPusnum
 	senPusnum = 0
 	if con is None:
 		return
@@ -83,7 +104,8 @@ def main():
 		senPusnum +=1
 		sensorPush(con,sensordata)
 
-	pullall(con)
+	pullTime(con, 1)
+	#pullall(con)
 
 	for i in range(senPusnum):
 		deleteSensor(con, str(i))
