@@ -48,6 +48,7 @@ def sendImage(img_name):
 	arr = encoder.encode_image(img_name)
 	arr = encoder.create_list(arr)
 	leng = len(arr)
+	print(leng)
 	sendMessage(leng.to_bytes(10, "big"), 255)
 	for i in range(len(arr)):
 		send_message(arr[i], i)
