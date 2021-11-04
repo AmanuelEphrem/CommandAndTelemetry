@@ -29,6 +29,7 @@ def receiveMessage():
 	packet = None
 	# check for packet rx
 	packet = loraRadio.receive(with_header = True)
+	print(packet)
 	if packet == None:
 		print("No Data Received")
 		return None
@@ -65,9 +66,8 @@ def main():
 	loraSetup();
 
 	# Main Communication loop
-	while True:
-		sendImage("donut.png")
-		time.sleep(0.1)
+	sendImage("donut.png")
+	time.sleep(0.1)
 
 
 # Runs the main function only if called from terminal
