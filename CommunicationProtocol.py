@@ -52,7 +52,7 @@ class CommunicationProtocol:
 	#Attempts to send, receive, and return received json
 	#@param  jsonToSend  a JSON string to send
 	#@return  the received JSON object as a dictionary, or None if nothing was received
-	def __communicateData(self, jsonToSend) -> dict:
+	def communicateData(self, jsonToSend) -> dict:
 		__sendJSON(jsonToSend)
 		return __receiveJSON()
 
