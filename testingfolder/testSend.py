@@ -11,7 +11,6 @@ import board # this is found only on raspberry pi
 #import adafruit_ssd1306
 # Import RFM9x
 import adafruit_rfm9x
-import imgfuncs
 import encoder
 
 def loraSetup():
