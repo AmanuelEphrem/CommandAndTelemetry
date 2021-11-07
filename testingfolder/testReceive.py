@@ -33,7 +33,7 @@ def receiveMessage():
 		return None
 	else:
 		iden = packet[2]
-		prev_packet = packet[4]
+		prev_packet = packet[4].decode("utf-8")
 		if prev_packet == "IMAGE INCOMING":
 			recieveImage(iden)
 		return prev_packet
