@@ -11,10 +11,7 @@ import board # this is found only on raspberry pi
 #import adafruit_ssd1306
 # Import RFM9x
 import adafruit_rfm9x
-<<<<<<< HEAD
 #import imgfuncs
-=======
->>>>>>> bd016a076000dc30fc18a54fe7bf2d277456a109
 import encoder
 
 def loraSetup():
@@ -51,6 +48,7 @@ def sendImage(img_name):
 	arr = encoder.encode_image(img_name)
 	arr = encoder.create_list(arr)
 	leng = len(arr)
+	print(leng)
 	sendMessage(bytes("IMAGE INCOMING", 'utf-8'), leng)
 	for i in range(leng):
 		sendMessage(arr[i], i)
@@ -69,7 +67,7 @@ def main():
 
 	# Main Communication loop
 	while True:
-		receiveMessage()
+		sendImage("donut.png")
 		time.sleep(0.1)
 
 
