@@ -11,7 +11,6 @@ import board # this is found only on raspberry pi
 #import adafruit_ssd1306
 # Import RFM9x
 import adafruit_rfm9x
-import imgfuncs
 import encoder
 
 def loraSetup():
@@ -35,8 +34,8 @@ def receiveMessage():
 	else:
 		iden = packet[2]
 		prev_packet = packet[4]
-		if iden == 255:
-			recieveImage(int.from_bytes(prev_packet, byteorder = 'big'))
+		if prev_packet == "IMAGE INCOMING":
+			recieveImage(iden)
 		return prev_packet
 
 # Sends indicated message via lora chip
@@ -48,9 +47,9 @@ def sendImage(img_name):
 	arr = encoder.encode_image(img_name)
 	arr = encoder.create_list(arr)
 	leng = len(arr)
-	sendMessage(leng.to_bytes(10, "big"), 255)
-	for i in range(len(arr)):
-		send_message(arr[i], i)
+	sendMessage(bytes.("IMAGE INCOMING", leng))
+	for i in range(leng):
+		sendMessage(arr[i], i)
 
 def recieveImage(length):
 	tempArr = [None] * length

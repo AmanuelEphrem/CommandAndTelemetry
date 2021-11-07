@@ -28,15 +28,14 @@ def receiveMessage():
 	packet = None
 	# check for packet rx
 	packet = loraRadio.receive(with_header = True)
-	print(packet)
 	if packet == None:
 		print("No Data Received")
 		return None
 	else:
 		iden = packet[2]
 		prev_packet = packet[4]
-		if iden == 255:
-			recieveImage(int.from_bytes(prev_packet, byteorder = 'big'))
+		if prev_packet == "IMAGE INCOMING":
+			recieveImage(iden)
 		return prev_packet
 
 # Sends indicated message via lora chip
@@ -48,10 +47,9 @@ def sendImage(img_name):
 	arr = encoder.encode_image(img_name)
 	arr = encoder.create_list(arr)
 	leng = len(arr)
-	print(leng)
-	sendMessage(leng.to_bytes(10, "big"), 255)
-	for i in range(len(arr)):
-		send_message(arr[i], i)
+	sendMessage(bytes.("IMAGE INCOMING", leng))
+	for i in range(leng):
+		sendMessage(arr[i], i)
 
 def recieveImage(length):
 	tempArr = [None] * length
@@ -66,8 +64,9 @@ def main():
 	loraSetup();
 
 	# Main Communication loop
-	sendImage("donut.png")
-	time.sleep(0.1)
+	while True:
+		sendImage("donut.png")
+		time.sleep(0.1)
 
 
 # Runs the main function only if called from terminal
