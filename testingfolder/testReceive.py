@@ -51,7 +51,7 @@ def sendImage(img_name):
 	arr = encoder.encode_image(img_name)
 	arr = encoder.create_list(arr)
 	leng = len(arr)
-	sendMessage(bytes.("IMAGE INCOMING", leng))
+	sendMessage(bytes("IMAGE INCOMING", 'utf-8'), leng)
 	for i in range(leng):
 		sendMessage(arr[i], i)
 
@@ -69,7 +69,7 @@ def main():
 
 	# Main Communication loop
 	while True:
-		recieveMessage()
+		receiveMessage()
 		time.sleep(0.1)
 
 

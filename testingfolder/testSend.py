@@ -49,7 +49,9 @@ def sendImage(img_name):
 	arr = encoder.encode_image(img_name)
 	arr = encoder.create_list(arr)
 	leng = len(arr)
+<<<<<<< HEAD
 	sendMessage(bytes("IMAGE INCOMING","utf-8"), leng)
+=======
 	for i in range(leng):
 		sendMessage(arr[i], i)
 
