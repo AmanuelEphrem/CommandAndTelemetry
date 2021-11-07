@@ -32,7 +32,12 @@ def receiveMessage():
 		print("No Data Received")
 		return None
 	else:
-		print(packet)
+		print(packet[0])
+		print(packet[1])
+		print(packet[2])
+		print(packet[3])
+		print(packet[4])
+		print(packet[5])
 		iden = packet[2]
 		prev_packet = packet[4].decode("utf-8")
 		if prev_packet == "IMAGE INCOMING":

@@ -29,15 +29,10 @@ class CommunicationProtocol:
 	#@param  jsonObject  a JSON string to send
 	#@return  True if sending is successful, False otherwise
 	def _sendJSON(self,jsonObject) -> bool:
-		try:
-			jsonObject.encode("utf-8","strict")	
-			sendingPacket = bytes(jsonObject)
-			loraRadio.send(sendingpacket)
-			return True
-		except:
-			return False
-
-	#Receives JSON using LoRa
+		jsonObject.encode("utf-8","strict")
+		sendingPacket = bytes(jsonObject,"utf-8")
+		self.loraRadio.send(sendingPacket)
+		return True
 	#@return  the received JSON object as a dictionary, or None if nothing was received
 	def _receiveJSON(self) -> dict:
 		receivedPacket = self.loraRadio.receive()
