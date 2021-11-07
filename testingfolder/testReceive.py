@@ -65,7 +65,7 @@ def main():
 
 	# Main Communication loop
 	while True:
-		recieveMessage()
+		receiveMessage()
 		time.sleep(0.1)
 
 
