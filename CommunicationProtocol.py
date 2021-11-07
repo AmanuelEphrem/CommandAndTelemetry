@@ -5,35 +5,33 @@
 import time
 import busio #import blinka libraries
 from digitalio import DigitalInOut, Direction, Pull
-#import board # this is found only on raspberry pi
+import board # this is found only on raspberry pi
 #import adafruit_ssd1306
 import adafruit_rfm9x #import Rfm9x
 import json
 
 class CommunicationProtocol:
-	
+
 	#Begins LoRa during instantiation
 	def __init__(self):
-		loraSetup()
-	
+		self._loraSetup()
+
 	#Setup for the LoRa module
-	def __loraSetup(self) -> bool:
-		try:
-			CS = DigitalInOut(board.CE1)
-			RESET = DigitalInOut(board.D25)
-			spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
-			self.loraRadio = adafruit_rfm9x.RFM9x(spi, CS, RESET, 915.0)
-			self.loraRadio.tx_power = 23
-			return True
-		except:
-			return False
+	def _loraSetup(self) -> bool:
+		CS = DigitalInOut(board.CE1)
+		RESET = DigitalInOut(board.D25)
+		spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
+		self.loraRadio = adafruit_rfm9x.RFM9x(spi, CS, RESET, 915.0)
+		self.loraRadio.tx_power = 23
+		return True
 	
 	#Sends JSON using LoRa
 	#@param  jsonObject  a JSON string to send
 	#@return  True if sending is successful, False otherwise
-	def __sendJSON(self,jsonObject) -> bool:
+	def _sendJSON(self,jsonObject) -> bool:
 		try:
-			sendingPacket = bytes(jsonObject,"utf-8")
+			jsonObject.encode("utf-8","strict")	
+			sendingPacket = bytes(jsonObject)
 			loraRadio.send(sendingpacket)
 			return True
 		except:
@@ -41,18 +39,19 @@ class CommunicationProtocol:
 
 	#Receives JSON using LoRa
 	#@return  the received JSON object as a dictionary, or None if nothing was received
-	def __receiveJSON(self) -> dict:
-		receivedPacket = loraRadio.receive()
+	def _receiveJSON(self) -> dict:
+		receivedPacket = self.loraRadio.receive()
 		if receivedPacket == None:
 			return None;
 		else:
-			receivedJson = json.loads(receivedPacket.decode())
+			receivedPacket.decode("utf-8","strict")
+			receivedJson = json.loads(receivedPacket)
 			return receivedJson
 		
 	#Attempts to send, receive, and return received json
 	#@param  jsonToSend  a JSON string to send
 	#@return  the received JSON object as a dictionary, or None if nothing was received
 	def communicateData(self, jsonToSend) -> dict:
-		__sendJSON(jsonToSend)
-		return __receiveJSON()
+		self._sendJSON(jsonToSend)
+		return self._receiveJSON()
 
