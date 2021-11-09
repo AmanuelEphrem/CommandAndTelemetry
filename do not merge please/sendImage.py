@@ -1,5 +1,6 @@
 import json
 import encoder
+import CommunicationProtocol as comm
 
 def sendImage(img_name):
 	arr = encoder.encode_image(img_name)
@@ -7,9 +8,9 @@ def sendImage(img_name):
 	leng = len(arr)
 	incoming_img = {"INCOMING IMAGE" : leng}
 	size_json = json.dumps(incoming_img)
-	# Send json file line goes here
+	comm.communicateData(size_json)
 	for i in range(leng):
 		nextImg = {str(arr[i]) : i}
-		next_jeson = json.dumps(nextImg)
-		# Send json file line goes here
+		next_json = json.dumps(nextImg)
+		comm.communicateData(next_json)
 sendImage("donut.png")
