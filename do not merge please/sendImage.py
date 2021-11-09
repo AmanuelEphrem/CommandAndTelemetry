@@ -10,5 +10,6 @@ def sendImage(img_name):
 	# Send json file line goes here
 	for i in range(leng):
 		nextImg = {str(arr[i]) : i}
+		next_jeson = json.dumps(nextImg)
 		# Send json file line goes here
 sendImage("donut.png")
