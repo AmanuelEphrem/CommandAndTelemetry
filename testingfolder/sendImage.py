@@ -14,7 +14,7 @@ def sendImage(img_name):
 		next_json = json.dumps(nextImg)
 		comm.communicateData(next_json)
 
-def receiveImage(arrSize, newimg): # Enters this function if you received the "IMAGE" message
+def receiveImage(arrSize, newimg): # Enters this function if you received the "image" message
 	imgarr = [None] * arrSize
 	for i in range(arrSize):
 		ans = comm.receiveData()
@@ -22,6 +22,6 @@ def receiveImage(arrSize, newimg): # Enters this function if you received the "I
 		tempval = list(ans.values())
 		imgarr[int(tempkey[0])] = bytearray(tempval[0])
 	finarr = encoder.recombine_list(imgarr)
-	encoder.decode_image(finarr, "newimg.png")
+	encoder.decode_image(finarr, newimg)
 
 # sendImage("donut.png")
