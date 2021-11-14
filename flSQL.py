@@ -1,7 +1,7 @@
 import sqlite3
 from sqlite3 import Error
 import pandas as pd
-import encode_image as e
+#import encode_image as e
 
 
 
@@ -138,16 +138,25 @@ def pullCount(db_connection):
 
 	return rows[0][0]
 
-#test area
-def main():
+#gets the most recent item in the database/ the item with the highest index count
+def pullMostRec(db_connection):
+	dbcount = pullCount(db_connection)
+	if(dbcount == 0):
+		return -1
+	return pullInd(db_connection, dbcount-1)
+
+#creates the intial database, returns the connection
+def start():
 	con = create_server_connection("flight.db")
 	global senPusnum
 	senPusnum = 0
 	if con is None:
-		return
+		return -1
 	setUp_DB(con)
 
-	print(pullCount(con))
+
+	return con
+	#print(pullMostRec(con))
 	#for x in range(5):
 	#	sensordata = (senPusnum,1,"test","test","test", "test","test", "test","test","test", "test","test","test", "nameless.jpg")
 	#	senPusnum +=1
@@ -160,6 +169,11 @@ def main():
 	#	deleteSensor(con, str(i))
 	#print(con)
 
+#example of start functiuon
+#sensorDataBase = start()
 
 
-main()
+
+
+
+
