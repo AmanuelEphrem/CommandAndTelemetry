@@ -25,7 +25,7 @@ def sendImg(imgname: str):
     comm.communicateData(inc_json)
     for i in range(imgLen):
         comm.sendPacket(imgArr[i], i, "bytearray")
-#        sendMessage(imgArr[i], i)
+#   sendMessage(imgArr[i], i)
 
 def sendMessage(message, numSent):
     sendingPacket = message

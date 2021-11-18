@@ -31,17 +31,17 @@ from CommunicationProtocol import CommunicationProtocol
 
 def recImg(imgLen: int):
 	comm = CommunicationProtocol()
-    comArr = [None] * imgLen
-    for i in range(imgLen): # TODO: Update this implementation to deal with lost/dropped packets.
-        packet = comm.recWithHeader()
-        comArr[packet[2]] = packet[4] # packet[2] should be the location in the array the packet should go. packet[4] should be the bytearray.
-    finArr = encoder.recombine_list(comArr)
-    ans = encoder.decode_image(finArr, "newimg.png") # Placeholder name
+	comArr = [None] * imgLen
+	for i in range(imgLen): # TODO: Update this implementation to deal with lost/dropped packets.
+		packet = comm.recWithHeader()
+		comArr[packet[2]] = packet[4] # packet[2] should be the location in the array the packet should go. packet[4] should be the bytearray.
+	finArr = encoder.recombine_list(comArr)
+	ans = encoder.decode_image(finArr, "newimg.png") # Placeholder name
 
 def main():
-    comm = CommunicationProtocol()
-    while True:
-        ans = comm.receiveJSON()
+	comm = CommunicationProtocol()
+		while True:
+	ans = comm.receiveJSON()
 		if ans['base'] == 'image':
 			recImg(ans['size'])
 	
