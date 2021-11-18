@@ -1,19 +1,5 @@
 import encoder
-import json
-import busio 
-from digitalio import DigitalInOut, Direction, Pull
-import board # this is found only on raspberry pi
-import adafruit_rfm9x 
 from CommunicationProtocol import CommunicationProtocol
-
-# THIS WILL BE REMOVED LATER - ITS IMPORTANT NOW FOR TESTING
-#def loraSetup(): # POSSIBLE ERROR: THIS MAY NOT WORK WITH COMMUNICATION PROTOCOL.
-#	global loraRadio
-#	CS = DigitalInOut(board.CE1)
-#	RESET = DigitalInOut(board.D25)
-#	spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
-#	loraRadio = adafruit_rfm9x.RFM9x(spi, CS, RESET, 915.0)
-#	loraRadio.tx_power = 23
 
 # def receiveMessage():
 # 	packet = None
@@ -30,18 +16,30 @@ from CommunicationProtocol import CommunicationProtocol
 # 		return prev_packet
 
 def recImg(imgLen: int):
-	comm = CommunicationProtocol()
-	comArr = [None] * imgLen
-	for i in range(imgLen): # TODO: Update this implementation to deal with lost/dropped packets.
-		packet = comm.recWithHeader()
-		comArr[packet[2]] = packet[4] # packet[2] should be the location in the array the packet should go. packet[4] should be the bytearray.
-	finArr = encoder.recombine_list(comArr)
-	ans = encoder.decode_image(finArr, "newimg.png") # Placeholder name
+    comm = CommunicationProtocol()
+    comArr = [None] * imgLen
+    i = 0
+    dropPacket = 0
+    while i < imgLen: # TODO: Update this implementation to deal with lost/dropped packets. 
+        packet = comm.recPacket()
+        if packet == None: # If we don't get a packet
+            continue # Restart the loop
+        i += 1
+        num = packet[2] # Sets num equal to the identifier given to the packet. That should be it's location in the array.
+        packet = packet[4:] # This SHOULD make packet equal to the actual passed bytearray with the header removed
+#         j = 0 # If packet = packet[4:] doesn't work, uncomment this and the next 2 lines and comment out packet = packet[4:]
+#         for j in range(4): # This removes the four header bytes from the bytearray. This can be done easier with a substring
+#             packet.pop(0)
+        comArr[num] = packet # Puts the packet(aka bytearray) in the location given by the identifier in the header.
+    finArr = encoder.recombine_list(comArr)
+    ans = encoder.decode_image(finArr, "newimg.png") # Placeholder name
 
 def main():
-	comm = CommunicationProtocol()
-		while True:
-	ans = comm.receiveJSON()
-		if ans['base'] == 'image':
-			recImg(ans['size'])
-	
+    comm = CommunicationProtocol()
+    while True:
+        ans = comm._receiveJSON()
+        if ans != None and ans['body'] == 'image':
+            recImg(ans)
+
+if __name__ == "__main__":
+    main()

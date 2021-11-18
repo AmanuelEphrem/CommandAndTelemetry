@@ -51,8 +51,8 @@ class CommunicationProtocol:
 		return self._receiveJSON()
 
 	def sendPacket(self, packet, num, type):
-		if type == "bytearray":
+		if type == 'bytearray':
 			self.loraRadio.send(packet, identifier = num)
-
+	
 	def recPacket(self) -> list:
-		return self.loraRadio.receive(with_header = True)
+		return self.loraRadio.receive(with_header = True, timeout = 1000)
