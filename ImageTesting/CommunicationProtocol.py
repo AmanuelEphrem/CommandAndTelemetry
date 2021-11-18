@@ -53,6 +53,8 @@ class CommunicationProtocol:
 	def sendPacket(self, packet, num, type):
 		if type == 'bytearray':
 			self.loraRadio.send(packet, identifier = num)
+		if type == "int":
+			self.loraRadio.send(bytes(str(packet), "utf-8"), identifier = num)
 	
-	def recPacket(self) -> list:
-		return self.loraRadio.receive(with_header = True, timeout = 1000)
+	def recPacket(self, timed) -> list:
+		return self.loraRadio.receive(with_header = True, timeout = timed)
