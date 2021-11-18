@@ -38,6 +38,9 @@ def recImg(imgLen: int):
     ans = encoder.decode_image(finArr, "newimg.png") # Placeholder name
 
 def main():
+    comm = CommunicationProtocol()
     while True:
-        comm = CommunicationProtocol()
-        comm.receiveJSON()
+        ans = comm.receiveJSON()
+	if ans['base'] == 'image':
+		recImg(ans['size'])
+	
