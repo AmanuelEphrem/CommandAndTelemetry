@@ -7,13 +7,13 @@ import adafruit_rfm9x
 from CommunicationProtocol import CommunicationProtocol
 
 # THIS WILL BE REMOVED LATER - ITS IMPORTANT NOW FOR TESTING
-def loraSetup():
-	global loraRadio
-	CS = DigitalInOut(board.CE1)
-	RESET = DigitalInOut(board.D25)
-	spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
-	loraRadio = adafruit_rfm9x.RFM9x(spi, CS, RESET, 915.0)
-	loraRadio.tx_power = 23
+#def loraSetup():
+#	global loraRadio
+#	CS = DigitalInOut(board.CE1)
+#	RESET = DigitalInOut(board.D25)
+#	spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
+#	loraRadio = adafruit_rfm9x.RFM9x(spi, CS, RESET, 915.0)
+#	loraRadio.tx_power = 23
 
 def sendImg(imgname: str):
     comm = CommunicationProtocol()
@@ -24,7 +24,8 @@ def sendImg(imgname: str):
     inc_json = json.dumps(incImg)
     comm.communicateData(inc_json)
     for i in range(imgLen):
-        sendMessage(imgArr[i], i)
+        comm.sendPacket(imgArr[i], i, "bytearray")
+#        sendMessage(imgArr[i], i)
 
 def sendMessage(message, numSent):
     sendingPacket = message

@@ -7,13 +7,13 @@ import adafruit_rfm9x
 from CommunicationProtocol import CommunicationProtocol
 
 # THIS WILL BE REMOVED LATER - ITS IMPORTANT NOW FOR TESTING
-def loraSetup(): # POSSIBLE ERROR: THIS MAY NOT WORK WITH COMMUNICATION PROTOCOL.
-	global loraRadio
-	CS = DigitalInOut(board.CE1)
-	RESET = DigitalInOut(board.D25)
-	spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
-	loraRadio = adafruit_rfm9x.RFM9x(spi, CS, RESET, 915.0)
-	loraRadio.tx_power = 23
+#def loraSetup(): # POSSIBLE ERROR: THIS MAY NOT WORK WITH COMMUNICATION PROTOCOL.
+#	global loraRadio
+#	CS = DigitalInOut(board.CE1)
+#	RESET = DigitalInOut(board.D25)
+#	spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
+#	loraRadio = adafruit_rfm9x.RFM9x(spi, CS, RESET, 915.0)
+#	loraRadio.tx_power = 23
 
 # def receiveMessage():
 # 	packet = None
@@ -30,9 +30,10 @@ def loraSetup(): # POSSIBLE ERROR: THIS MAY NOT WORK WITH COMMUNICATION PROTOCOL
 # 		return prev_packet
 
 def recImg(imgLen: int):
+	comm = CommunicationProtocol()
     comArr = [None] * imgLen
     for i in range(imgLen): # TODO: Update this implementation to deal with lost/dropped packets.
-        packet = loraRadio.receive(with_header = True)
+        packet = comm.recWithHeader()
         comArr[packet[2]] = packet[4] # packet[2] should be the location in the array the packet should go. packet[4] should be the bytearray.
     finArr = encoder.recombine_list(comArr)
     ans = encoder.decode_image(finArr, "newimg.png") # Placeholder name
@@ -41,6 +42,6 @@ def main():
     comm = CommunicationProtocol()
     while True:
         ans = comm.receiveJSON()
-	if ans['base'] == 'image':
-		recImg(ans['size'])
+		if ans['base'] == 'image':
+			recImg(ans['size'])
 	
