@@ -59,7 +59,7 @@ def sendImgTest(imgname: str):
 
 
 def main():
-    sendImg("donut.png")
+    sendImgTest("donut.png")
 
 if __name__ == "__main__":
     main()
