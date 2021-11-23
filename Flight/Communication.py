@@ -32,7 +32,7 @@ def receiveMessage():
             
             if packet == None:
                     print("No Data Received")
-            
+					return ""
             else:
                     prev_packet = packet
                     packet_text = str(prev_packet, "utf-8")
@@ -40,6 +40,7 @@ def receiveMessage():
                     #test Radio strengeth
                     rssi = loraRadio.last_rssi
                     print("Signal strengeth: {0} dB".format(rssi))
+					return packet_texts
 
 # Sends indicated message via lora chip
 def sendMessage(message):
