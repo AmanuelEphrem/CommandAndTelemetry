@@ -10,7 +10,7 @@ GPIO.setwarnings(False)
 GPIO.setup(target,GPIO.OUT,initial=GPIO.LOW) 
 
 #drops the load
-def dropLoad:
+def dropLoad():
 	GPIO.output(target,GPIO.HIGH)
 	time.sleep(.5)
 	GPIO.output(target,GPIO.LOW)
