@@ -47,8 +47,13 @@ class CommunicationProtocol:
 			receivedJson = json.loads(receivedPacket)
 			return receivedJson
 	
-	#Reads raw bytes to memory in specific directory
+	#Reads raw bytes to memory in a specific directory
 	def _readAndStoreImageBytes():
+		pass
+	
+	#Sends the specified image over the LoRa module
+	#REMEMBER: a json must first be sent to indicate that images are coming
+	def _sendImage(fileName:str) -> bool:
 		pass
 		
 	#Assigns the jsonData to the correct subgroup
@@ -58,7 +63,7 @@ class CommunicationProtocol:
 		if subgroupDict.get(jsonData["receiver"]) == None:
 			return False
 
-		subgroupDict[jsonData["receiver"]].setPayloadData(copy.deepCopy(jsonData))	
+		subgroupDict[jsonData["receiver"]].setPayloadData(jsonData)	
 		return True
 
 	#Receives payload and distributes it to the correct subgroup and sends subgroup data over LoRa
@@ -78,3 +83,4 @@ class CommunicationProtocol:
 			sendingJSON = element.packageSubgroupData()
 			if sendingJSON != None:
 				_sendJSON(sendingJSON)
+
