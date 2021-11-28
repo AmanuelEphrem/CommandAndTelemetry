@@ -6,13 +6,16 @@ import time
 # Import Blinka Libraries
 import busio
 from digitalio import DigitalInOut, Direction, Pull
-import board
+import board # this is found only on raspberry pi
 # Import the SSD1306 module.
-import adafruit_ssd1306
+#import adafruit_ssd1306
 # Import RFM9x
 import adafruit_rfm9x
 
+
+
 def loraSetup():
+	global loraRadio
 	#Setup Lora
 	CS = DigitalInOut(board.CE1)
 	RESET = DigitalInOut(board.D25)
@@ -35,10 +38,13 @@ def receiveMessage():
 			prev_packet = packet
 			packet_text = str(prev_packet, "utf-8")
 			print(packet_text)
+			#test Radio strengeth
+			rssi = loraRadio.last_rssi
+			print("Signal strengeth: {0} dB".format(rssi))
 
 # Sends indicated message via lora chip
 def sendMessage(message):
-	sendingPacket = bytes(message)
+	sendingPacket = bytes(message,"utf-8")
 	loraRadio.send(sendingPacket)
 
 
@@ -48,14 +54,13 @@ def main():
 
 	# Main Communication loop
 	while True:
-		receiveMessage()
+		sendMessage("Sending from ground to flight")
 		time.sleep(0.1)
-		sendMessage("Sending from flight to ground")
+		receiveMessage()
 		time.sleep(0.1)
 
 
 # Runs the main function only if called from terminal
-if __name__ == __main__:
+if __name__ == "__main__":
+	print("main method here")	
 	main();
-
-
