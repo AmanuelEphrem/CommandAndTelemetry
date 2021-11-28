@@ -86,7 +86,7 @@ def main():
     while True:
         ans = comm._receiveJSON()
         if ans != None and ans['body'] == 'image':
-            recImgTest(ans)
+            recImgTest(ans['size'])
 
 if __name__ == "__main__":
     main()
