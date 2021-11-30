@@ -47,7 +47,7 @@ def sendImgTest(imgname: str):
 			numSent += 1
 			time.sleep(0.05)
 		hold = comm.recPacket(1000) # Listen for a response from the other side with which packets it got. Will be an int between 0-31 inclusive.
-		hold = int(hold.decode("utf-8")) # !!! THIS MIGHT NOT WORK !!!
+		hold = int.to_bytes(hold, "big")
 		dropped = 0 # Which number got dropped
 		while hold > 0 and dropped < len(prevPacks): # While hold is > 00000 (no dropped packets)
 			if hold & 1 == 1: # Check if the bottom number of hold is 1 (aka that packet dropped)
