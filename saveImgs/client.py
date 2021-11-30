@@ -11,5 +11,5 @@ def main():
     for i in range(len(final)):
         s.send(final[i])
     s.close()
-
-main()
+if __name__ == "__main__":
+    main()
