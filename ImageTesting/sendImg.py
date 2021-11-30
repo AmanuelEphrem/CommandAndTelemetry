@@ -16,7 +16,7 @@ def sendImg(imgname: str):
 		comm.sendPacket(imgArr[i], i, "bytearray")
 		time.sleep(0.05)
 
-# Figuring out how to send the pieces required, maybe?
+# Figuring out how to send the pieces required, maybe? 
 def sendImgTest(imgname: str):
 	comm = CommunicationProtocol()
 	tempArr = encoder.encode_image(imgname)
