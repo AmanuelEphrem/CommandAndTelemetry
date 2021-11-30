@@ -23,4 +23,5 @@ def main():
 			tempArr[i] = nextUp
 		finArr = encoder.recombine_list(tempArr)
 		encoder.decode_image(finArr, "imgName%d.png"%addr[1])
-main()
+if __name__ == "__main__":
+    main()
