@@ -5,8 +5,15 @@ import SubgroupClass
 import ThreadingClass
 import Threading
 def main():
-	groundStation = SubgroupClass("groundStation",56783)
-	dictOfSubgroup = {"groundStation":groundStation}	
+	#Defines the port and instantiates subgroup objects
+	sensoryPort = 12345
+	faultManagementPort = 749742
+	machineLearningPort = 83298
+	sensoryGroup= SubgroupClass("sensory",sensoryPort)
+	faultManagementGroup = SubgroupClass("faultManagement",faultManagementPort)
+	machineLearningGroup = SubgroupClass("machineLearning",machineLearningPort)
+
+	dictOfSubgroup = {"sensory":sensoryGroup,"faultManagement":faultManagementGroup,"machineLearning":machineLearningGroup}
 	commProtocol = CommunicationProtocol(dictOfSubgroup)
 		
 	#begin background thread (passing in groundStation as a reference)
