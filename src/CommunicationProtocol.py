@@ -10,6 +10,7 @@ import board # this is found only on raspberry pi
 import adafruit_rfm9x #import Rfm9x
 import json
 import copy
+import encoder
 
 class CommunicationProtocol:
 
@@ -35,26 +36,46 @@ class CommunicationProtocol:
 		sendingPacket = bytes(jsonObject,"utf-8")
 		self.loraRadio.send(sendingPacket)
 		return True
-	
+
 	#Receives JSON using LoRa
 	#@return  the received JSON object as a dictionary, or None if nothing was received
 	def _receiveJSON(self) -> dict:
 		receivedPacket = self.loraRadio.receive()
 		if receivedPacket == None:
-			return None;
+			return None
 		else:
 			receivedPacket.decode("utf-8","strict")
 			receivedJson = json.loads(receivedPacket)
 			return receivedJson
 	
 	#Reads raw bytes to memory in a specific directory
-	def _readAndStoreImageBytes():
-		pass
+	def _readAndStoreImageBytes(self, imgLen: int):
+		comArr = [None] * imgLen
+		i = 0
+		while i < imgLen: # TODO: Update this implementation to deal with lost/dropped packets. 
+			packet = self.loraRadio.receive(with_header = True, timeout = 500)
+			if packet == None: # If we don't get a packet
+				continue # Restart the loop
+			i += 1
+			num = packet[2] # Sets num equal to the identifier given to the packet. That should be it's location in the array.
+			packet = packet[4:] # This SHOULD make packet equal to the actual passed bytearray with the header removed
+			comArr[num] = packet # Puts the packet(aka bytearray) in the location given by the identifier in the header.
+		finArr = encoder.recombine_list(comArr)
+		ans = encoder.decode_image(finArr, "newimg.png") # Placeholder name
 	
 	#Sends the specified image over the LoRa module
 	#REMEMBER: a json must first be sent to indicate that images are coming
-	def _sendImage(fileName:str) -> bool:
-		pass
+	def _sendImage(self,  fileName:str) -> bool:
+		tempArr = encoder.encode_image(fileName)
+		imgArr = encoder.create_list(tempArr)
+		imgLen = len(imgArr)
+		incImg = {"type" : "image", "size" : imgLen}
+		inc_json = json.dumps(incImg)
+		_sendJSON(inc_json)
+		time.sleep(1)
+		for i in range(imgLen):
+			self.loraRadio.send(imgArr[i], identifier = i)
+			time.sleep(0.05)
 		
 	#Assigns the jsonData to the correct subgroup
 	#@param  jsonData  a json dictionary 
@@ -74,7 +95,7 @@ class CommunicationProtocol:
 		#distribute payload
 		if payload != None:
 			if payload["type"] == "image":
-				_readAndStoreImageBytes()
+				_readAndStoreImageBytes(payload["size"])
 			else:
 				_delegateData(payload)
 
@@ -83,4 +104,3 @@ class CommunicationProtocol:
 			sendingJSON = element.packageSubgroupData()
 			if sendingJSON != None:
 				_sendJSON(sendingJSON)
-
