@@ -1,3 +1,15 @@
+Header explanation:
+num = Location in final array = 7 = b(111)
+j = Location in sending array = 3 = b(011)
+num <<= 3 -> b(111000)
+num |= j -> (b111011)
+Sends num across
+ans = position in received array = 7 = b(111)
+ans &= num -> b(000011) = 3
+num >>= 3 b(111)
+Preserves original num while also bringing over the original location.
+Since we only send 5 packets at a time, this is OK to be hardcoded in like this.
+
 PSEUDOCODE EXPLANATION:
 sendImgTest:
   incImg encoded into json and sent to receiving location
