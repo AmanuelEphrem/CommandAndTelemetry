@@ -16,7 +16,7 @@ def sendImg(imgname: str):
 		comm.sendPacket(imgArr[i], i, "bytearray")
 		time.sleep(0.05)
 
-# Figuring out how to send the pieces required, maybe? 
+# Figuring out how to send the pieces required, maybe?
 def sendImgTest(imgname: str):
 	comm = CommunicationProtocol()
 	tempArr = encoder.encode_image(imgname)
@@ -41,15 +41,15 @@ def sendImgTest(imgname: str):
 		for j in range(cycle): # Just cycle through the array.
 			tempPack = packToSend.pop()
 			tempNum = numToSend.pop() # Remove top packet + number
+			tempNum = addLoc(tempNum, j) # Adds the location of the packet in the packToSend array to num.
 			comm.sendPacket(tempPack, tempNum, "bytearray") # Send top packet + it's num.
 			prevPacks.append(tempPack)
 			prevNums.append(tempNum)
 			numSent += 1
-			time.sleep(0.05)
 		hold = comm.recPacket(1000) # Listen for a response from the other side with which packets it got. Will be an int between 0-31 inclusive.
-		hold = int.to_bytes(hold, "big")
+		hold = int(hold.decode("utf-8")) # !!! THIS MIGHT NOT WORK !!!
 		dropped = 0 # Which number got dropped
-		while hold > 0 and dropped < len(prevPacks): # While hold is > 00000 (no dropped packets)
+		while hold > 0: # While hold is > 00000 (no dropped packets)
 			if hold & 1 == 1: # Check if the bottom number of hold is 1 (aka that packet dropped)
 				packToSend.append(prevPacks[dropped]) # If it is, add that packet + it's num to the packToSend
 				numToSend.append(prevNums[dropped])
@@ -57,7 +57,10 @@ def sendImgTest(imgname: str):
 			hold >>= 1 # Rightshift hold by 1
 			dropped += 1 # Increment dropped
 
-
+def addLoc(num:int, loc:int):
+	num <<= 3
+	num |= loc
+	return num
 
 def main():
 	sendImgTest("donut.png")
