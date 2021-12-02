@@ -23,7 +23,7 @@ def decode_image(encimg, newimg):
 # returns an array of bytearrays which make up the input
 def create_list(img_whole):
 	#num = math.ceil(len(img_whole)/250)
-    fin_arr = [img_whole[i:i+200] for i in range(0, len(img_whole), 200)] # Splits the bytearray into n bytearrays, where n is the value of the length of img_whole / 200 rounded up.
+    fin_arr = [img_whole[i:i+240] for i in range(0, len(img_whole), 240)] # Splits the bytearray into n bytearrays, where n is the value of the length of img_whole / 200 rounded up.
     return fin_arr # Returns the array containing all n bytearrays generated in the previous instruction.
 
 # img_sep expects an array of bytearrays
