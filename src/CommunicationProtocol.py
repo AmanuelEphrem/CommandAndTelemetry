@@ -50,18 +50,62 @@ class CommunicationProtocol:
 	
 	#Reads raw bytes to memory in a specific directory
 	def _readAndStoreImageBytes(self, imgLen: int):
-		comArr = [None] * imgLen
-		i = 0
-		while i < imgLen: # TODO: Update this implementation to deal with lost/dropped packets. 
-			packet = self.loraRadio.receive(with_header = True, timeout = 500)
-			if packet == None: # If we don't get a packet
-				continue # Restart the loop
-			i += 1
-			num = packet[2] # Sets num equal to the identifier given to the packet. That should be it's location in the array.
-			packet = packet[4:] # This SHOULD make packet equal to the actual passed bytearray with the header removed
-			comArr[num] = packet # Puts the packet(aka bytearray) in the location given by the identifier in the header.
+		self.loraRadio.ack_delay(.2) # This MIGHT let ack send better
+		comArr = [None] * imgLen # Makes an empty array of the size of the length of the image. Sample(if imgLen = 12): [None, None, None, None, None, None, None, None, None, None, None, None]
+		assembled = 0 # Keeps a counter of the total number of packets successfully received and put in their correct spot
+		i = 0 # Keeps a counter of the number of packets received from the last 5
+		recPackets = [] # Contains received packets out of the last 5 (hopefully) sent. Sample: [b(1234), b(5678), b(7890)]
+		recNums = [] # Contains the location in the comArr of the received packets. Sample: [6, 7, 10]
+		locPos = [] # Contains which packet out of 5 expected the received packet/num combo at the same location. Sample: [0, 1, 4]
+		while assembled < imgLen: # If we have the same number (or greater) of assembled packets as we expected, end this loop.
+			if i >= 5: # This is the same at at the bottom of the loop, but this just catches it if the last packet was None
+				failed = self.checkLoc(locPos)
+				self.loraRadio.send_with_ack(failed)
+				i = 0
+				recPackets = []
+				recNums = []
+				locPos = []
+				continue
+			packet = self.loraRadio.receive(with_header = True, timeout = 5) # Wait 5 for a packet
+			if packet == None: # If no packet was received
+				i += 1 # Increment i and restart the loop
+				continue
+			i += 1 # Otherwise, increment i
+			num = packet[2] # Set num equal to the identifier
+			print(packet)
+			print(bin(num))
+			pos = packet[3]
+			print(packet[2:4])
+			pos &= 7
+			print(num)
+			print(pos)
+			packet = packet[4:] # Set the packet equal to the sent packet
+			try:
+				comArr[num] = packet # Put the packet in the location specified by the identifier
+			except:
+				continue
+			recPackets.append(packet) # Put the received packet at the end of the recPackets list
+			recNums.append(num) # Put it's corresponding number in the same location in the recNums
+			locPos.append(pos) # Put it's corresponding pos in sending list in the same location in locPos
+			assembled += 1 # Add 1 to assembled, since a packet was successfully received.
+			if i >= 5: # If we received 5 packets since the last time we checked
+				failed = self.checkLoc(locPos) # Gets the number sent back to sendImg of packets that were not received.
+				self.loraRadio.send_with_ack(failed)
+				i = 0 # Resets i
+				recPackets = [] # Resets recPackets
+				recNums = [] # Resets recNums
+				locPos = [] # Resets locPos
 		finArr = encoder.recombine_list(comArr)
-		ans = encoder.decode_image(finArr, "newimg.png") # Placeholder name
+		ans = encoder.decode_image(finArr, "newimg.png")
+
+	def checkLoc(locPos) -> int:
+		num = 0 # Set num to 0
+		for j in reversed(locPos): # Go through a reversed version of locPos
+			num >>= j
+			num |= 1
+			num <<= j
+		num ^= 31
+		return num
 	
 	#Sends the specified image over the LoRa module
 	#REMEMBER: a json must first be sent to indicate that images are coming
@@ -69,13 +113,52 @@ class CommunicationProtocol:
 		tempArr = encoder.encode_image(fileName)
 		imgArr = encoder.create_list(tempArr)
 		imgLen = len(imgArr)
-		incImg = {"type" : "image", "size" : imgLen}
+		incImg = {"body" : "image", "size" : imgLen}
 		inc_json = json.dumps(incImg)
-		_sendJSON(inc_json)
+		self._sendJSON(inc_json)
 		time.sleep(1)
-		for i in range(imgLen):
-			self.loraRadio.send(imgArr[i], identifier = i)
-			time.sleep(0.05)
+		i = 0
+		numSent = 0
+		packToSend = [] # Empty array to hold all packets waiting to be sent
+		numToSend = [] # Empty array to hold all nums corresponding to those packets
+		while numSent < imgLen: # While numSent is less than the number of expected packets to send
+			print("nSent", numSent)
+			print("iL", imgLen)
+			prevPacks = []
+			prevNums = []
+			while len(packToSend) < 5 and i < imgLen: # If there are more than 5 packets in packToSend OR i has exceeded the length of imgLen, don't do this
+				packToSend.append(imgArr[i]) # Put a new packet on the end of the list
+				numToSend.append(i) # Put it's corresponding number on the end of the other list
+				i += 1 # Increment i
+			cycle = len(packToSend) # Usually should be 5. However, can be less if at end of list.
+			for j in range(cycle): # Just cycle through the array.
+				tempPack = packToSend.pop()
+				tempNum = numToSend.pop() # Remove top packet + number
+				tFlag = j
+				print(tempNum)
+				print("j", j)
+				self.loraRadio.send(tempPack, identifier = tempNum, flags = tFlag)
+				prevPacks.append(tempPack)
+				prevNums.append(tempNum)
+				numSent += 1
+			hold = self.loraRadio.receive(with_header = True, with_ack = True, timeout = 30) # Listen for a response from the other side with which packets it got. Will be an int between 0-31 inclusive.
+			if(hold == None):
+				continue
+			hold = int.from_bytes(hold, "big")
+			dropped = 0 # Which number got dropped
+			while hold > 0 and dropped < len(prevPacks): # While hold is > 00000 (no dropped packets)
+				if hold & 1 == 1: # Check if the bottom number of hold is 1 (aka that packet dropped)
+					packToSend.append(prevPacks[dropped]) # If it is, add that packet + it's num to the packToSend
+					numToSend.append(prevNums[dropped])
+					numSent -= 1 # Remove 1 from numSent (since we lost a packet)
+				hold >>= 1 # Rightshift hold by 1
+				dropped += 1 # Increment dropped
+			time.sleep(0.1)
+
+	def addLoc(num:int, loc:int):
+		num <<= 3
+		num |= loc
+		return num
 		
 	#Assigns the jsonData to the correct subgroup
 	#@param  jsonData  a json dictionary 
