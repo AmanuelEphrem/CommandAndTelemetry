@@ -50,9 +50,9 @@ class CommunicationProtocol:
 		self._sendJSON(jsonToSend)
 		return self._receiveJSON()
 
-	def sendPacket(self, packet, num, type):
+	def sendPacket(self, packet, num, type, flag):
 		if type == 'bytearray':
-			self.loraRadio.send(packet, identifier = num)
+			self.loraRadio.send(packet, identifier = num, flags = flag)
 		if type == "int":
 			self.loraRadio.send_with_ack(packet.to_bytes(10, "big"))
 	
