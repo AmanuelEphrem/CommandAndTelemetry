@@ -1,4 +1,4 @@
-Header explanation:
+**Identifier change explanation:**
 num = Location in final array = 7 = b(111)
 j = Location in sending array = 3 = b(011)
 num <<= 3 -> b(111000)
