@@ -27,7 +27,7 @@ def recImgTest(imgLen: int):
 	while assembled < imgLen: # If we have the same number (or greater) of assembled packets as we expected, end this loop.
 		if i >= 5: # This is the same at at the bottom of the loop, but this just catches it if the last packet was None
 			failed = checkLoc(locPos)
-			comm.sendPacket(failed, 0, "int")
+			comm.sendPacket(failed, 0, "int", 0)
 			i = 0
 			recPackets = []
 			recNums = []
@@ -39,8 +39,9 @@ def recImgTest(imgLen: int):
 			continue
 		i += 1 # Otherwise, increment i
 		num = packet[2] # Set num equal to the identifier
-		pos = getPos(num) # Get the position of the packet in the original sending array
-		num >>= 3 # Remove the position value
+		pos = packet[3] # Get the position of the packet in the original sending array
+		pos &= 7
+#		num >>= 3 # Remove the position value
 		packet = packet[4:] # Set the packet equal to the sent packet
 		comArr[num] = packet # Put the packet in the location specified by the identifier
 		recPackets.append(packet) # Put the received packet at the end of the recPackets list
@@ -49,7 +50,7 @@ def recImgTest(imgLen: int):
 		assembled += 1 # Add 1 to assembled, since a packet was successfully received.
 		if i >= 5: # If we received 5 packets since the last time we checked
 			failed = checkLoc(locPos) # Gets the number sent back to sendImg of packets that were not received.
-			comm.sendPacket(failed, 0, "int") # Sends that number
+			comm.sendPacket(failed, 0, "int", 0) # Sends that number
 			i = 0 # Resets i
 			recPackets = [] # Resets recPackets
 			recNums = [] # Resets recNums
