@@ -13,7 +13,7 @@ def sendImg(imgname: str):
 	comm._sendJSON(inc_json)
 	time.sleep(1)
 	for i in range(imgLen):
-		comm.sendPacket(imgArr[i], i, "bytearray")
+		comm.sendPacket(imgArr[i], i, "bytearray", 0)
 		time.sleep(0.05)
 
 # Figuring out how to send the pieces required, maybe?
@@ -41,8 +41,9 @@ def sendImgTest(imgname: str):
 		for j in range(cycle): # Just cycle through the array.
 			tempPack = packToSend.pop()
 			tempNum = numToSend.pop() # Remove top packet + number
-			tempNum = addLoc(tempNum, j) # Adds the location of the packet in the packToSend array to num.
-			comm.sendPacket(tempPack, tempNum, "bytearray") # Send top packet + it's num.
+			#tempNum = addLoc(tempNum, j) # Adds the location of the packet in the packToSend array to num.
+			tFlag = j
+			comm.sendPacket(tempPack, tempNum, "bytearray", tFlag) # Send top packet + it's num.
 			prevPacks.append(tempPack)
 			prevNums.append(tempNum)
 			numSent += 1
