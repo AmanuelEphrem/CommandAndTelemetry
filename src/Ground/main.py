@@ -11,11 +11,8 @@ def main():
 	commProtocol = CommunicationProtocol(dictOfSubgroup)
 		
 	# This is super ugly, but it allows us to get the local ip of the pi and use that as the running IP for the socket.
-	# I don't know how to communicate this to ground station...
-	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	s.connect(('8.8.8.8', 80))
-	IP = s.getsockname()[0]
-	s.close()
+	hostname = socket.gethostname()
+	IP = socket.gethostbyname(hostname)
 	#begin background thread (passing in groundStation as a reference)
 	x = threading.Thread(target=ThreadingClass.thrSocket,args=(dictOfSubgroups, IP),daemon=True)
 	x.start()
