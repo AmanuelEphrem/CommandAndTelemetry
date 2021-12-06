@@ -3,11 +3,11 @@ import threading
 import json
 
 class ThreadingClass:
-	def thrSocket(groups: dict):
+	def thrSocket(groups: dict, addr):
 		s = socket.socket()
 		print("Socket")
 		port = 12345
-		s.bind(('127.0.0.1', port))
+		s.bind((addr, port))
 		print("Socket bound")
 		s.listen(5)
 		print("Listening")
