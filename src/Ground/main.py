@@ -10,7 +10,7 @@ def main():
 	commProtocol = CommunicationProtocol(dictOfSubgroup)
 		
 	#begin background thread (passing in groundStation as a reference)
-	x = threading.Thread(target=ThreadingClass.thrSocket,args=(dictOfSubgroups),daemon=True)
+	x = threading.Thread(target=ThreadingClass.thrSocket,args=(dictOfSubgroups, "THIS MUST BE THE LOCAL IP OF THE MACHINE"),daemon=True)
 	x.start()
 	
 	keepConnectionAlive = True
