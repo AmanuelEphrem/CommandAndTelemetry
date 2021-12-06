@@ -17,7 +17,7 @@ def main():
 	commProtocol = CommunicationProtocol(dictOfSubgroup)
 		
 	#begin background thread (passing in groundStation as a reference)
-	x = threading.Thread(target=ThreadingClass.thrSocket,args=(dictOfSubgroups),daemon=True)
+	x = threading.Thread(target=ThreadingClass.thrSocket,args=(dictOfSubgroups,'127.0.0.1'),daemon=True)
 	x.start()
 	
 	keepConnectionAlive = True
