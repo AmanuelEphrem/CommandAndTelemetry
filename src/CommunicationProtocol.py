@@ -11,6 +11,7 @@ import adafruit_rfm9x #import Rfm9x
 import json
 import copy
 import encoder
+import socket
 
 class CommunicationProtocol:
 
@@ -95,8 +96,14 @@ class CommunicationProtocol:
 				recPackets = [] # Resets recPackets
 				recNums = [] # Resets recNums
 				locPos = [] # Resets locPos
-		finArr = encoder.recombine_list(comArr)
-		ans = encoder.decode_image(finArr, "newimg.png")
+		# Once it's done receiving, send the contents of comArr across a socket to the ground station computer.
+		s = socket.socket()
+		port = 11711
+		s.connect(('*SERVER IP*', port))
+		for i in comArr:
+			s.send(i)
+		s.close()
+		
 
 	def checkLoc(locPos) -> int:
 		num = 0 # Set num to 0
